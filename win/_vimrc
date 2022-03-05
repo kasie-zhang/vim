@@ -1,0 +1,310 @@
+"======================================================================================
+" Description: Personal vimrc file.
+"
+" Last Change: 10/19/2021 21：37
+"
+" Version: 1.0
+"
+" Author: Kasie Zhang
+"
+"======================================================================================
+" Vim with all enhancements
+source $VIMRUNTIME/vimrc_example.vim
+
+" Use the internal diff if available.
+" Otherwise use the special 'diffexpr' for Windows.
+if &diffopt !~# 'internal'
+  set diffexpr=MyDiff()
+endif
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg1 = substitute(arg1, '!', '\!', 'g')
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg2 = substitute(arg2, '!', '\!', 'g')
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let arg3 = substitute(arg3, '!', '\!', 'g')
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  let cmd = substitute(cmd, '!', '\!', 'g')
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+
+
+
+
+"======================================================================================
+" Description: Plugin add here.
+"
+" Last Change: 10/19/2021 21：39
+"
+" Version: 1.0
+"
+" Author: Kasie Zhang
+"
+"======================================================================================
+
+call plug#begin('C:/CS/Vim/vimfiles/plugged')	   " 需要新建 plugged 文件夹
+
+Plug 'https://hub.fastgit.org/maksimr/vim-jsbeautify.git'
+
+" Markdown 预览插件
+Plug 'https://hub.fastgit.org/iamcco/mathjax-support-for-mkdp.git'
+Plug 'https://hub.fastgit.org/iamcco/markdown-preview.vim.git'
+
+
+" 主题
+Plug 'https://hub.fastgit.org/liuchengxu/space-vim-dark.git'
+
+" 底部悬浮条
+Plug 'https://hub.fastgit.org/vim-airline/vim-airline.git'
+
+" 代码补全
+Plug 'https://hub.fastgit.org/ycm-core/YouCompleteMe.git'
+
+" 普通文本高亮
+Plug 'https://hub.fastgit.org/flniu/txt.vim'
+
+" 文件树
+Plug 'https://hub.fastgit.org/scrooloose/nerdtree.git'
+
+" git 状态跟踪
+Plug 'https://hub.fastgit.org/Xuyuanp/nerdtree-git-plugin.git'
+
+" icon 定制
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'✹',
+                \ 'Staged'    :'✚',
+                \ 'Untracked' :'✭',
+                \ 'Renamed'   :'➜',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'✖',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }
+
+Plug 'https://hub.fastgit.org/skywind3000/asynctasks.vim.git'
+Plug 'https://hub.fastgit.org/skywind3000/asyncrun.vim.git'
+let g:asyncrun_open = 20	" 输出结果在terminal内，呈现20行
+"将.task文件放在系统根目录下（项目所在的盘，C或D...)
+
+call plug#end()
+
+
+
+"======================================================================================	
+" Description: Vim system setting.
+"
+" Last Change: 10/19/2021 21：39
+"
+" Version: 1.0
+"
+" Author: Kasie Zhang
+"
+"======================================================================================
+set nocompatible " 关闭 vi 兼容模式
+syntax on " 自动语法高亮
+set number " 显示行号
+set textwidth=100 " 确保每一行不超过 100 字符
+set cursorline " 突出显示当前行
+set ruler " 打开状态栏标尺
+set shiftwidth=4 " 设定 << 和 >> 命令移动时的宽度为 4
+set softtabstop=4 " 使得按退格键时可以一次删掉 4 个空格
+set tabstop=4 " 设定 tab 长度为 4
+set nobackup " 覆盖文件时不备份
+set noerrorbells  " 取消 Vim 的错误警告铃声
+set autochdir " 自动切换当前目录为当前文件所在的目录
+filetype plugin indent on " 开启插件
+filetype on  " 自动识别文件格式
+set backupcopy=yes " 设置备份时的行为为覆盖
+set ignorecase smartcase " 搜索时忽略大小写，但在有一个或以上大写字母时仍保持对大小写敏感
+set nowrapscan " 禁止在搜索到文件两端时重新搜索
+set incsearch " 输入搜索内容时就显示搜索结果
+set hlsearch " 搜索时高亮显示被找到的文本
+set t_vb= " 置空错误铃声的终端代码
+set showmatch " 插入括号时，短暂地跳转到匹配的对应括号
+set matchtime=1 " 匹配括号高亮的时间
+set magic " 设置魔术
+set hidden " 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
+set guioptions-=T " 隐藏工具栏
+set guioptions-=m " 隐藏菜单栏
+set smartindent " 开启新行时使用智能自动缩进
+set backspace=indent,eol,start
+" 不设定在插入状态无法用退格键和 Delete 键删除回车符
+set laststatus=2 " 显示状态栏 (默认值为 1, 无法显示状态栏)
+set encoding=utf-8
+set completeopt=longest,menu  "设置自动补全的选项. longest表示只自动补全最大匹配的部分
+set wildmenu		" Tab键补全时，在状态栏显示匹配的列表
+set expandtab       " 输入Tab字符时,自动替换成空格
+set termencoding=utf-8
+set formatoptions+=mM
+set fencs=utf-8,gbk
+set fileencodings=utf-8,gbk
+" 共享剪切板
+set clipboard=unnamed
+set nobackup
+set noswapfile
+:set noundofile
+
+
+" space-vim-dark setting
+color space-vim-dark
+set termguicolors
+hi Comment cterm=italic
+hi  Comment guifg = #5C6370 ctermfg = 59
+hi LineNr ctermbg=NONE guibg=NONE
+
+
+"======================================================================================	
+" Description: 键盘映射.
+"
+" Last Change: 10/20/2021 16：30
+"
+" Version: 1.0
+"
+" Author: Kasie Zhang
+"
+"======================================================================================
+" F9-开启Markdown预览     
+" F10-关闭预览
+" Ctrl + C  | Visual Model下，复制选中字段
+" Ctrl + A  | Normal Model下，复制全部文件
+" Ctrl + `  | Open Lift Panel - File Tree
+" Crtl + /  | Open Right Panel - class outline viewer
+" Crtl + t  | Open a new embedded terminal
+" Crtl + i  | PlugInstall
+
+map <silent> <F9> <Plug>MarkdownPreview         
+map <silent> <F10> <Plug>StopMarkdownPreview
+vmap <silent> <C-c> y
+nmap <silent> <C-a> ggvGy
+map <C-`> :NERDTree<CR>
+nmap <C-/> :TagbarToggle<CR>
+map <C-t> :term bash<CR>
+map <C-i> :PlugInstall<CR>
+noremap <silent><F5> :AsyncTask file-run<CR>
+noremap <silent><F6> :AsyncTask file-build<CR>
+
+
+"======================================================================================	
+" Description: Auto insert file titile.
+"
+" Last Change: 10/20/2021 16：30
+"
+" Version: 1.0
+"
+" Author: Kasie Zhang
+"
+"======================================================================================
+autocmd BufNewFile *.cpp,*.py,*.java,*.bat,*.c exec ":call Template()"
+
+"各类文件模板，包括 c,c++,python,java,bat
+
+func Template()
+	"如果文件类型为.sh文件 
+	if &filetype == 'c' 
+		call setline(1, "/**************************************************************************************") 
+		call append(line("."), "* ") 
+		call append(line(".")+1, "* ") 
+		call append(line(".")+2, "* @create time: ".strftime("%m/%d/%Y %H:%M:%S")) 
+		call append(line(".")+3, "* @author: Kasie Zhang") 
+		call append(line(".")+4, "* @version: 1.0") 
+		call append(line(".")+5, "**************************************************************************************/")
+		call append(line(".")+6, "")
+		call append(line(".")+7, "#include<stdio.h>")
+		call append(line(".")+8, "")
+		call append(line(".")+9, "int main(){")
+		call append(line(".")+10, "    ")
+		call append(line(".")+11, "}")
+
+		autocmd VimEnter * normal 12G
+	endif
+
+	if &filetype == 'cpp'
+		call setline(1, "/**************************************************************************************") 
+		call append(line("."), "* ") 
+		call append(line(".")+1, "* ") 
+		call append(line(".")+2, "* @create time: ".strftime("%m/%d/%Y %H:%M:%S")) 
+		call append(line(".")+3, "* @author: Kasie Zhang") 
+		call append(line(".")+4, "* @version: 1.0") 
+		call append(line(".")+5, "**************************************************************************************/")
+		call append(line(".")+6, "")
+		call append(line(".")+7, "#include<iostream>")
+		call append(line(".")+8, "using namespace std;")
+		call append(line(".")+9, "")
+		call append(line(".")+10, "int main(){")
+		call append(line(".")+11, "    ")
+		call append(line(".")+12, "}")
+
+		autocmd VimEnter * normal 13G
+	endif
+
+
+	if &filetype == 'python'
+		call setline(1, "#######################################################################################") 
+		call append(line("."), "# ") 
+		call append(line(".")+1, "# ") 
+		call append(line(".")+2, "# @create time: ".strftime("%m/%d/%Y %H:%M:%S")) 
+		call append(line(".")+3, "# @author: Kasie Zhang") 
+		call append(line(".")+4, "# @version: 1.0") 
+		call append(line(".")+5, "#######################################################################################")
+
+		"新建文件后，自动定位到文件末尾
+		autocmd VimEnter * normal G
+		"另起一行
+		autocmd VimEnter * normal o
+	endif
+
+
+	if &filetype == 'java'
+		call setline(1, "/**************************************************************************************") 
+		call append(line("."), "* ") 
+		call append(line(".")+1, "* ") 
+		call append(line(".")+2, "* @create time: ".strftime("%m/%d/%Y %H:%M:%S")) 
+		call append(line(".")+3, "* @author: Kasie Zhang") 
+		call append(line(".")+4, "* @version: 1.0") 
+		call append(line(".")+5, "**************************************************************************************/")
+		call append(line(".")+6,"public class ".expand("%:r").expand("{"))
+		call append(line(".")+7,"	public static void main(String[] args){")
+		call append(line(".")+8,"        ")
+		call append(line(".")+9,"	}")
+		call append(line(".")+10,"}")
+
+		autocmd VimEnter * normal 10G
+	endif
+
+	if &filetype == 'dosbatch'
+		call setline(1, "::=====================================================================================") 
+		call append(line("."), "::  ") 
+		call append(line(".")+1, "::") 
+		call append(line(".")+2, ":: @create time: ".strftime("%m/%d/%Y %H:%M:%S")) 
+		call append(line(".")+3, ":: @author: Kasie Zhang") 
+		call append(line(".")+4, ":: @version: 1.0") 
+		call append(line(".")+5, "::=====================================================================================")
+
+		autocmd VimEnter * normal G
+		autocmd VimEnter * normal o
+	endif
+endfunc
+
